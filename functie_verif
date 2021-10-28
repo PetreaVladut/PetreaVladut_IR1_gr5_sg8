@@ -1,0 +1,99 @@
+@@ -0,0 +1,98 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
+using namespace std;
+
+
+bool verif(char sir[100])
+{
+    char op[]= {"&|=)><"}; //operatori care nu se pot succeda pe ei insisi sau paranteza deschisa
+    char op_neg[]= {"&|)><!"};//operatori care nu pot succeda negatia
+    char op_dub[]= {"&|"};//operatori care vin in pereche
+    int ctp=0;//numarul parantezelor deschise
+    bool ok=false,ok1;
+    for(int i=0; i<strlen(sir); i++)
+    {
+        ok1=true;
+        if(sir[i]=='(')
+        {
+            ctp++;
+            ok=true;
+        }
+        else if(strchr(op_dub,sir[i]))
+            if(sir[i]!=sir[i+1])
+            {
+                cout<<"eroarea la caracterul "<<i+1;
+                return false;
+            }
+            else
+            {
+                ok=true;
+                ok1=false;
+                i++;
+            }
+        else if(sir[i]=='!')
+            if(strchr(op_neg,sir[i+1])!=NULL)
+            {
+                cout<<"eroarea la caracterul "<<i+1;
+                return false;
+            }
+            else
+            {
+                ok=true;
+                if(sir[i+1]=='=')
+                {
+                    i++;
+                    ok1=false;
+                }
+            }
+        else if(sir[i]=='=')
+            if(sir[i+1]!='='&&sir[i+1]!='>')
+            {
+                cout<<"eroarea la caracterul "<<i+1;
+                return false;
+            }
+            else
+            {
+                ok=true;
+                ok1=false;
+                i++;
+            }
+        else if(sir[i]==')')
+        {
+            ctp--;
+            if(ctp<0||isalpha(sir[i+1]))
+            {
+                cout<<"eroarea la caracterul "<<i+1;
+                return false;
+            }
+        }
+        else if(isalpha(sir[i]))
+        {
+            if(sir[i+1]=='(')
+            {
+                cout<<"eroarea la caracterul "<<i+2;
+                return false;
+            }
+        }
+        if(strchr(op,sir[i])&&ok&&ok1)//variabilele ok se asiguraca 2 operatori nu se succed
+        {
+            cout<<"eroarea la caracterul "<<i+1;
+            return false;
+        }
+        ok=false;
+    }
+    return true;
+}
+
+
+int main()
+{
+    char sir[100];//input ul
+    cin.getline(sir,100);
+    if(verif(sir))
+    cout<<"true";
+    return 0;
+
+}

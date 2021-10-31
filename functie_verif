@@ -6,94 +6,93 @@
 using namespace std;
 
 
-bool verif(char sir[100])
+int verif(char s[])
 {
-    char op[]= {"&|=)><"}; //operatori care nu se pot succeda pe ei insisi sau paranteza deschisa
-    char op_neg[]= {"&|)><!"};//operatori care nu pot succeda negatia
-    char op_dub[]= {"&|"};//operatori care vin in pereche
-    int ctp=0;//numarul parantezelor deschise
-    bool ok=false,ok1;
-    for(int i=0; i<strlen(sir); i++)
+    int cmplx=0,par=0,atom=0,op=0,urm;
+    bool ok;
+    for(int i=0; i<strlen(s); i++)
     {
-        ok1=true;
-        if(sir[i]=='(')
+        if(isalpha(s[i]))
         {
-            ctp++;
-            ok=true;
+            if(s[i+1]=='(')
+                return 0;
+//            else
+//            {
+//                ok=true;
+//                for(int j=0; j<atom; j++)
+//                    if(s[vect_atom[j]]==s[i])
+//                        ok=false;
+//                if(ok)
+//                   vect_atom[atom++]=i;
+//            }
         }
-        else if(strchr(op_dub,sir[i]))
-            if(sir[i]!=sir[i+1])
-            {
-                cout<<"eroarea la caracterul "<<i+1;
-                return false;
-            }
+        if(s[i]=='(')
+        {
+            if(strchr("&)|=/n",s[i+1]))
+                return 0;
             else
             {
-                ok=true;
-                ok1=false;
-                i++;
+                cmplx++;
+                par++;
             }
-        else if(sir[i]=='!')
-            if(strchr(op_neg,sir[i+1])!=NULL)
+        }
+        if(s[i]=='&'||s[i]=='|')
+        {
+            if(s[i+1]==s[i])
             {
-                cout<<"eroarea la caracterul "<<i+1;
-                return false;
-            }
-            else
-            {
-                ok=true;
-                if(sir[i+1]=='=')
+                if(strchr("&)|=!/n",s[i+2]))
+                    return 0;
+                else
                 {
                     i++;
-                    ok1=false;
+                    op++;
                 }
             }
-        else if(sir[i]=='=')
-            if(sir[i+1]!='='&&sir[i+1]!='>')
-            {
-                cout<<"eroarea la caracterul "<<i+1;
-                return false;
-            }
             else
-            {
-                ok=true;
-                ok1=false;
-                i++;
-            }
-        else if(sir[i]==')')
-        {
-            ctp--;
-            if(ctp<0||isalpha(sir[i+1]))
-            {
-                cout<<"eroarea la caracterul "<<i+1;
-                return false;
-            }
+                return 0;
         }
-        else if(isalpha(sir[i]))
+        if(s[i]=='!')
         {
-            if(sir[i+1]=='(')
-            {
-                cout<<"eroarea la caracterul "<<i+2;
-                return false;
-            }
+                if(s[i+1]!='('&&!isalpha(s[i+1]))
+                    if(s[i+1]!='=')
+                        return 0;
+                    else if(strchr("&)|=!/n",s[i+2]))
+                        return 0;
+                    else
+                        op++;
+                else
+                    op++;
         }
-        if(strchr(op,sir[i])&&ok&&ok1)//variabilele ok se asiguraca 2 operatori nu se succed
+        if(s[i]==')')
         {
-            cout<<"eroarea la caracterul "<<i+1;
-            return false;
+            par--;
         }
-        ok=false;
+        if(s[i]=='=')
+        {
+            if(s[i]=='='||s[i]=='>')
+                if(strchr("&)|=!/n",s[i+2]))
+                    return 0;
+                else
+                    op++;
+            else
+                return 0;
+        }
     }
-    return true;
+    if(par!=0)
+        return 0;
+    if(cmplx!=op)
+        return 0;
+    return 1;
 }
 
 
 int main()
 {
-    char sir[100];//input ul
-    cin.getline(sir,100);
+    fin.getline(sir,100);
     if(verif(sir))
-    cout<<"true";
-    return 0;
+        cout<<"true";
+        else
+            cout<<"false";
 
+    return 0;
 }
